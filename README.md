@@ -17,7 +17,7 @@ Both pipelines estimate a no-campaign counterfactual and compare it with observe
 
 ## Method Summary
 
-Given observed sales or conversions \(Y_{it}\):
+Given observed sales or conversions $$(Y_{it}$$):
 
 $$
 Y_{it} = Y_{it}^N + \tau_{it} D_{it}
