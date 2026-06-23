@@ -66,3 +66,28 @@ $$\sum_{j=2}^{J+1} w_j = 1 \quad \text{and} \quad w_j \ge 0$$
 *   **Time-Varying Confounding**: Unlike standard Difference-in-Differences (DiD), SCM accounts for changing unobserved variables by letting donor impacts evolve over time.
 *   **Transparency**: The final weight vector explicitly reveals which control markets or products form the baseline, making the model highly auditable.
 *   **Statistical Validation**: Placebo tests (applying the model to unexposed units) offer robust, non-parametric p-values to confirm significance.
+
+## What is the "Donor Pool"?
+In the Synthetic Control Method (SCM), the donor pool is a collection of unexposed units (such as regions, cities, stores, or products) that were not treated by the marketing campaign.
+Instead of comparing your campaign market to a single, imperfect "control city" (like comparing Mumbai to Delhi), SCM blends multiple units from this donor pool together. The algorithm assigns a specific weight to each donor to create a custom, "synthetic" version of your target market.
+------------------------------
+## How the Algorithm Uses Donors
+The script matches the target market’s historical patterns using the donor units.
+
+```text
+Donor 0 (e.g., Region A)  --[ Weight: 0.60 ]--> \
+Donor 1 (e.g., Region B)  --[ Weight: 0.40 ]-->  ==>  Synthetic Target Market
+Donor 2 (e.g., Region C)  --[ Weight: 0.00 ]--> /
+```
+
+
+   1. Pre-Campaign Calibration: The model looks at the pre-campaign data. It realizes that a combination of 60% of Donor 0 and 40% of Donor 1 perfectly mimics your target market's organic sales curves. It ignores Donor 2 completely by giving it a weight of 0.00.
+   2. Post-Campaign Projection: During the campaign, the target market receives marketing spend, but the donor pool does not. The model takes the ongoing, real-time sales from Donor 0 and Donor 1, applies the same 0.60 and 0.40 weights, and constructs the baseline counterfactual (what would have happened).
+
+------------------------------
+## Strict Selection Rules for Your Donors
+To get an accurate lift calculation, your donor pool units must meet three strict technical criteria:
+
+* Total Isolation: Donors must have zero exposure to the campaign. If there is marketing spillover (e.g., a TV ad from the target market bleeds into a donor city's broadcast), the donor's sales will artificially rise, causing the model to underestimate your true campaign lift.
+* Driven by the Same Macro Factors: The donors must share the same macroeconomic environment as the target market. If an unmapped economic shock (like a local lockdown or extreme weather) hits a donor but not the target market, the synthetic baseline will break down.
+* No Extrapolation (The Convex Hull Rule): SCM restricts weights to be non-negative and sum to 1. This means the target market's sales must fall within the range of the donor pool's data. If your target market sells 10,000 units a week, and all your donors only sell 2,000 units a week, the model cannot properly scale up to match it.
