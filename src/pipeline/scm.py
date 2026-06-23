@@ -14,14 +14,7 @@ class Control(Protocol):
 
 
 class CampaignLiftCalculator:
-    def __init__(
-        self,
-        target_data: list[float],
-        donor_data: list[list[float]],
-        campaign_start: str,
-        dates: list[str],
-        control_model: Control | None = None,
-    ):
+    def __init__(self, target_data: list[float], donor_data: list[list[float]], campaign_start: str, dates: list[str], control_model: Control | None = None):
         self.target_data = target_data
         self.donor_data = donor_data
         self.campaign_start = campaign_start
