@@ -77,3 +77,12 @@ def load_media_conversion_data(filepath: str | Path = None) -> CsvDataResult:
     target_data = df[target_col].values
     donor_data = df[donor_cols]
     return dates, target_data, donor_data
+
+
+def load_sample_univariate_data(filepath: str | Path = None) -> pd.DataFrame:
+    """Load sample univariate data from a CSV file."""
+    if filepath is None:
+        filepath = Path(__file__).parent.parent / "data" / "univariate_test_data.csv"
+    filepath = Path(filepath) if isinstance(filepath, str) else filepath
+    df = pd.read_csv(filepath)
+    return df

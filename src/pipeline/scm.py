@@ -2,9 +2,9 @@ from typing import Protocol
 
 import numpy as np
 
-from .scm import SyntheticControl
-from .utils.lift import calculate_campaign_lift
-from .utils.format_results import format_results
+from ..scm import SyntheticControl
+from ..utils.lift import LiftEvaluator
+from ..utils.format_results import format_results
 
 
 class Control(Protocol):
@@ -85,9 +85,14 @@ class CampaignLiftCalculator:
         synthetic_sales = self.control_model.predict(donor_arr)
 
         # Calculate Campaign Lift Metrics (Post-Campaign Window)
-        absolute_lift_per_step, total_incremental_sales, percentage_lift = calculate_campaign_lift(
-            target_arr, synthetic_sales, self.dates, self.campaign_start
+        evaluator = LiftEvaluator(
+            mode="standard",
+            actual=target_arr,
+            synthetic=synthetic_sales,
+            dates=self.dates,
+            campaign_start=self.campaign_start
         )
+        absolute_lift_per_step, total_incremental_sales, percentage_lift = evaluator.calculate_lift()
 
         # Format Results Output
         df_results = format_results(target_arr, synthetic_sales, campaign_start_idx)
